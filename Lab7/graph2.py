@@ -2,20 +2,21 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import heapq
 
-# Heuristic values (red numbers from image)
-heuristic = {'A': 11, 'B': 6, 'C': 99, 'D': 1, 'E': 7, 'G': 0}
+# Heuristic values
+heuristic = {'S': 8, 'A': 8, 'B': 4, 'C': 3, 'D': float('inf'), 'E': float('inf'), 'G': 0}
 
-# Define graph edges and their weights (blue numbers)
+# Define edges and weights
 edges = {
-    'A': [('B', 2), ('E', 3)],
-    'B': [('A', 2), ('C', 1), ('G', 9)],
-    'C': [('B', 1)],
-    'E': [('A', 3), ('D', 6)],
-    'D': [('E', 6), ('G', 1)],
-    'G': [('B', 9), ('D', 1)]
+    'S': [('A', 1), ('B', 5), ('C', 8)],
+    'A': [('S', 1), ('D', 3), ('E', 7), ('G', 9)],
+    'B': [('S', 5), ('G', 4)],
+    'C': [('S', 8), ('G', 5)],
+    'D': [('A', 3)],
+    'E': [('A', 7)],
+    'G': [('A', 9), ('B', 4), ('C', 5)]
 }
 
-# A* Implementation
+# A* Algorithm
 def astar(start, goal):
     open_list = [(0, start)]
     g = {start: 0}
@@ -23,7 +24,6 @@ def astar(start, goal):
 
     while open_list:
         _, current = heapq.heappop(open_list)
-
         if current == goal:
             path = []
             while current:
@@ -42,19 +42,20 @@ def astar(start, goal):
 
 
 # Run A*
-path = astar('A', 'G')
+path = astar('S', 'G')
 print("Shortest path found by A*:", path)
 
 # Visualization
-G = nx.Graph()
+G = nx.DiGraph()
 for node in edges:
     for neighbor, cost in edges[node]:
         G.add_edge(node, neighbor, weight=cost)
 
-pos = nx.spring_layout(G, seed=7)
-nx.draw(G, pos, with_labels=True, node_color="#f4cccc", node_size=1500, font_size=14, font_weight='bold')
+pos = nx.spring_layout(G, seed=5)
+nx.draw(G, pos, with_labels=True, node_color="#e06666", node_size=1500, font_size=14, font_weight='bold', arrows=True)
 edge_labels = nx.get_edge_attributes(G, 'weight')
 nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='blue')
 
-plt.title("A* Pathfinding Graph 1")
+plt.title("A* Pathfinding Graph 2")
 plt.show()
+
